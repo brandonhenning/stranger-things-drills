@@ -1,8 +1,5 @@
 const url = ('https://quiet-bayou-99554.herokuapp.com/api/v1/contacts');
 
-const currentCharacter = '';
-
-
 function createPage () {
     fetch(url)
     .then((response) => {
@@ -37,7 +34,3 @@ function createPage () {
 
 createPage();
 
-
-// document.querySelector('body').addEventListener('click', (element) => {
-//     console.log(element)
-// });
