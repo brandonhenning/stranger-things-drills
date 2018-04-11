@@ -56,14 +56,16 @@ function submitEvent(data) {
             })
         })
         .then(res => res.json())
-        .catch(error => console.log('Error', error))
-        .then(response => console.log(('Success', response)))
+        .then(response => ('Success', response))
         .then((response) => {
             document.querySelector('.save-status').textContent = 'Success!';
             setTimeout(() => {
-               document.querySelector('.save-status').textContent = '';
+                document.querySelector('.save-status').textContent = '';
             }, 4000)
         })
+        .catch(error => ('Error', error))
     })
 }
+
+
 
