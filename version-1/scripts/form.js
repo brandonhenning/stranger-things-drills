@@ -24,9 +24,9 @@ document.querySelector('form').addEventListener('submit', (event) => {
 
 function handleStatus (response) {
     if (response.error) {
-        messageBox = response.error.message
+        document.querySelector('p').textContent = response.error.message
     } else {
-        messageBox = response.data.message
+        document.querySelector('p').textContent = response.data.message
     }
 }
 
