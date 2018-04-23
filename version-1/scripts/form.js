@@ -1,9 +1,10 @@
-const postUrl = ('https://quiet-bayou-99554.herokuapp.com/api/v1/contacts');
+const postUrl = ('https://quiet-bayou-99554.herokuapp.com/api/v1/contacts')
 
-let params = (new URL(document.location)).searchParams;
-let character = params.get('character');
+let params = (new URL(document.location)).searchParams
+let character = params.get('character')
 let nameInput = document.getElementById('character')
-nameInput.value = character;
+nameInput.value = character
+let messageBox = document.querySelector('p').textContent
 
 
 document.querySelector('form').addEventListener('submit', (event) => {
@@ -18,10 +19,14 @@ document.querySelector('form').addEventListener('submit', (event) => {
         })
     })
     .then(res => res.json())
-    .catch(error => console.log('Error', error))
-    .then(response => console.log(('Success', response)))
-    .then(() => {
-        document.querySelector('p').textContent = 'SUCCESS'
-    })
-});
+    .then(handleStatus)
+})
+
+function handleStatus (response) {
+    if (response.error) {
+        messageBox = response.error.message
+    } else {
+        messageBox = response.data.message
+    }
+}
 
