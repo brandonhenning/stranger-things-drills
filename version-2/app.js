@@ -1,56 +1,78 @@
-const url = ('https://galvanize-leader-board.herokuapp.com/api/v1/leader-board');
-const postURL = ('https://galvanize-leader-board.herokuapp.com/api/v1/leader-board');
+const url = ('https://galvanize-leader-board.herokuapp.com/api/v1/leader-board')
+const postURL = ('https://galvanize-leader-board.herokuapp.com/api/v1/leader-board')
+const scoreBoard = document.querySelector('.scores')
 
 
-function updateScores () {
+function fetchScores () {
     fetch(url)
-    .then((response) => {
-        return response.json();
+    .then(res => res.json())
+    .then(data => {
+        return getHighscore(data)
     })
-    .then((data) => {
-        for (var i = (data.length - 3); i < data.length; i++) {
-            let p = document.createElement('p')
-            let span = document.createElement('span')
-            let score = document.createElement('span')
-            score.className = 'score'
-            score.textContent = data[i].score
-            span.className = 'player-name'
-            span.textContent = data[i].player_name
-            p.className = 'score-card'
-            document.querySelector('.scores').appendChild(p)
-            p.appendChild(span)
-            p.appendChild(score)
-        }
+    .then(topScores => {
+        refreshScores(topScores)
     })
 }
 
-window.onload = updateScores();
+function getHighscore (data) {
+    data.sort((a, b) => b.score - a.score)
+    let scores = [data[0], data[1], data[2]]
+    return scores
+}
 
-
-document.querySelector('canvas').addEventListener('gameOver', function (event) {
-    let currentPlayer = document.querySelector('.big-input').value;
-    let data = {'game_name': 'GBP', 'player_name': currentPlayer, "score": score}
-
-    fetch(postURL, {
-        method: 'POST',
-        body: JSON.stringify(data),
-        headers: new Headers({
-            'Content-Type': 'application/json'
-        })
+function refreshScores (topScores) {
+    scoreBoard.innerHTML = ''
+    return topScores.forEach(topScore => {
+        let p = document.createElement('p')
+        let score = document.createElement('span')
+        score.className = 'score'
+        score.textContent = topScore.score
+        let span = document.createElement('span')
+        span.className = 'player-name'
+        span.textContent = topScore.player_name
+        p.className = 'score-card'
+        scoreBoard.appendChild(p)
+        p.appendChild(span)
+        p.appendChild(score)
     })
-    .then(res => res.json())
-    .catch(error => console.log('Error', error))
-    .then(response => console.log('Success', response))
+}
 
-    fetch(url)
-    .then((response) => {
-        return response.json();
+
+function gameOver() {
+    alert(`GAME OVER! Your score is: ${score}`)
+    const data = {
+      game_name: 'GBP',
+      player_name: document.querySelector('input').value,
+      score
+    }
+    postScore(data)
+      .then(fetchScores)
+  }
+  
+  function postScore(data) {
+    return fetch(postURL, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    }).then(handleResponse).catch(error => {
+      console.error(error)
     })
-    .then((data) => {
-        for (var i = (data.length - 3); i < data.length; i++) {
-            document.querySelector('.player-name').textContent = data[i].player_name
-            document.querySelector('.score').textContent = data[i].score
-        }
-    })
-});
+  }
+  
+  function handleResponse(response) {
+    if(response.ok) {
+      return response.json()
+    } else {
+      return response.json().then(error => {
+        throw error
+      })
+    }
+  }
+
+
+fetchScores()
+canvas.addEventListener('gameOver', gameOver)
+
 
